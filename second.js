@@ -73,10 +73,15 @@ const users = [
 
 
 const signUp =(user)=>{
+    //check user email
 	let User =  users.find(User => User.email === user.email);
-	if(!User && user.password.length>=6){
+	if(!User){
+        if(user.password.length>=6){
 		users.push(user);
         console.log('user added')
+        }else{
+            console.log('enter password more than 6 characters')
+        }
 	}else {
       console.log('user already exists or add a valid password')
 	}
@@ -87,26 +92,16 @@ signUp(user)
 console.log(users)
 
 const signIn =(user)=>{
+    //check user email in db
 	let User =  users.find(User => User.email === user.email);
     let checkPassword = users.find(User => User.password === user.password);
-	if(User && checkPassword){
-		User.isLoggedIn=true;
-        console.log('user logged in')
-	}else {
-      console.log('user not found or checkPassword')
-	}
-}
-
-let user = {email:"thomas@thomas.com",password:"1333"};
-signIn(user)
-console.log(users)
-
-const signIn =(user)=>{
-	let User =  users.find(User => User.email === user.email);
-    let checkPassword = users.find(User => User.password === user.password);
-	if(User && checkPassword){
-		User.isLoggedIn=true;
-        console.log('user logged in')
+	if(User){
+        if(checkPassword){
+            User.isLoggedIn=true;
+            console.log('user logged in')
+        }else{
+            console.log('incorrect password')
+        }
 	}else {
       console.log('user not found or checkPassword')
 	}
@@ -118,12 +113,18 @@ console.log(users)
 
 
 const rateProduct =(user,product,rating)=>{
+    //find user and product in db
 	let User =  users.find(User => User._id === user._id);
     let Product = products.find(Product => Product._id === product._id)
     console.log(Product)
-	if(Product && User.isLoggedIn ){
-		Product.ratings.push({userId:user._id,rate:rating});
-        console.log('rating added')
+    //check whether user logged in
+	if(User.isLoggedIn ){
+        if(Product){
+            Product.ratings.push({userId:user._id,rate:rating});
+            console.log('rating added')
+        }else{
+            console.log('product not found')
+        }
 	}else {
       console.log('user not logged in')
 	}
@@ -136,22 +137,55 @@ rateProduct(user,product,rating)
 console.log(products)
 
 const averageRating =(product)=>{
+    //check product
     let Product = products.find(Product => Product._id === product._id)
     let count = 0;
     let sum = 0;
-    Product.ratings.forEach((element) => { 
-    sum += element.rate
-    count++
+    Product.ratings.forEach((element) => {
+        sum += element.rate
+        count++
     })
-    let numOfRatings = Product.ratings.length
     let avgRating = sum/count
+    let numOfRatings = Product.ratings.length
 	if(Product){
-		Product.avgRating=avgRating;
-        console.log('rating added')
+        if(!numOfRatings){
+            console.log('no ratings')
+        }else{
+            Product.avgRating = avgRating;
+            console.log('rating added')
+        }
 	}else {
       console.log('user not logged in')
 	}
 }
 let product = {_id: 'eedfcf',}
 averageRating(product)
+console.log(products)
+
+const likeProduct =(user,product)=>{
+    //check user and product in db
+	let User =  users.find(User => User._id === user._id);
+    let Product = products.find(Product => Product._id === product._id)
+	if(User.isLoggedIn ){
+        if(Product){
+            if(Product.likes.includes(user._id)){
+                //remove like if there
+                Product.likes.pop({userId:user._id});
+                console.log('disliked')
+            }else{
+                //add like if not there
+		Product.likes.push({userId:user._id});
+        console.log('like added')
+            }
+        }else{
+            console.log("product not found")
+        }
+	}else {
+      console.log('user not logged in')
+	}
+}
+
+let user = {_id: 'ab12ex',};
+let product = {_id: 'hedfcg',}
+likeProduct(user,product)
 console.log(products)

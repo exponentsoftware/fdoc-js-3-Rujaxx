@@ -3,7 +3,7 @@ let student = ['David', ['HTM', 'CSS', 'JS', 'React'], [98, 85, 90, 95]]
 
 let [names,skills,scores]= student
 
-let [,,jsScores,reactScores] = scores
+let [HTM,CSS,jsScores,reactScores] = scores
 
 console.log(names,skills,scores)
 console.log(jsScores,reactScores)
@@ -67,7 +67,47 @@ console.log(objectValueLenght)
 skillsKeysLenght = Object.keys(copiedStudent.skills).length
 console.log(skillsKeysLenght)
 
-skillsKeysLenght = Object.keys(copiedStudent.skills).length
-console.log(skillsKeysLenght)
-
 console.log(copiedStudent.hasOwnProperty('graphicDesign'));
+
+
+
+
+
+//another solution
+let x = {
+    skills: {
+        frontEnd: [
+            {skill:"BootStrap",level:8}
+        ],
+        backEnd: [
+            {skill:"Express",level:9}
+        ],
+        dataBase:[
+            {skill:"SQL",level:9}
+        ],
+        dataScience:["SQL"]
+    }
+}
+
+function deepmerge(foo, bar) {
+    let merged = {};
+    for (let each in bar) {
+      if (each in foo) {
+        if (typeof(foo[each]) == "object" && typeof(bar[each]) == "object") {
+          merged[each] = deepmerge(foo[each], bar[each]);
+        } else {
+          merged[each] = [foo[each], bar[each]];
+        }
+      } else {
+        merged[each] = bar[each];
+      }
+    }
+    for (let each in foo) {
+      if (!(each in bar)) {
+        merged[each] = foo[each];
+      }
+    }
+    return merged;
+  }
+  
+  console.log(JSON.stringify(deepmerge(student,x)))
